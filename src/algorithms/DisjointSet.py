@@ -1,4 +1,4 @@
-class DisjointSet:
+'''class DisjointSet:
     def __init__(self, n):
         self.ls = [i for i in range(n)]
 
@@ -20,7 +20,7 @@ class DisjointSet:
             if not d.get(s):
                 d[s] = []
             d[s].append(i)
-        return list(d.values())
+        return list(d.values())'''
 
 class Node:
     def __init__(self, key):
@@ -28,27 +28,42 @@ class Node:
         self.rank = 0
         self.p = self
 
-def union(a, b):
-    if a.rank > b.rank:
-        b.p = a
-    else:
-        a.p = b
-        if a.rank == b.rank:
-            b.rank += 1
+class DisjointSet:
+    def __init__(self, keys):
+        self.kn = dict()
+        for k in keys:
+            self.kn[k] = Node(k)
 
-def find(n):
-    if n is not n.p:
-        n.p = find(n.p)
-    return n.p
+    def union(self, ka, kb):
+        a = self.find(ka)
+        b = self.find(kb)
+        if a.rank > b.rank:
+            b.p = a
+        else:
+            a.p = b
+            if a.rank == b.rank:
+                b.rank += 1
+
+    def find(self, ka):
+        return self._find(self.kn[ka])
+
+    def _find(self, a):
+        if a is not a.p:
+            a.p = self._find(a.p)
+        return a.p
 
 if __name__ == '__main__':
-    ds = DisjointSet(10)
-    ds.union(1, 2)
-    ds.union(3, 4)
-    ds.union(4, 8)
-    ds.union(2, 9)
-    print(ds.dump())
-
+    s = DisjointSet(['a', 'b', 'c', 'd'])
+    s.union('a', 'b')
+    s.union('b', 'd')
+    if s.find('a') is s.find('b'):
+        print("a, b unioned")
+    else:
+        print('a, b not union')
+    if s.find('c') is s.find('d'):
+        print('c, d unioned')
+    else:
+        print('c, d not unioned')
 
 
 
