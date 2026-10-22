@@ -1,9 +1,9 @@
 class Node:
-    def __init__(self, t, leaf = True, keys = None, children = None):
+    def __init__(self, t, leaf=True, keys=None, children=None):
         assert t > 1, "node t must be greater than 1"
         self.p = None
         self.t = t
-        self.t2 = 2*t
+        self.t2 = 2 * t
         self.leaf = leaf
         self.keys = keys or []
         self.children = children or []
@@ -14,7 +14,7 @@ class Node:
         return len(self.keys)
 
     def should_split(self):
-        return self.n() == self.t2 - 1        
+        return self.n() == self.t2 - 1
 
     def split_child(self, i):
         y = self.children[i]
@@ -25,11 +25,11 @@ class Node:
             children = y.children[y.t : y.t2 + 1]
         z = Node(self.t, y.leaf, keys, children)
         z.p = self
-        self.keys.insert(i, y.keys[y.t-1])
-        del y.keys[y.t-1:]
+        self.keys.insert(i, y.keys[y.t - 1])
+        del y.keys[y.t - 1 :]
         if not y.leaf:
-            del y.children[y.t:]
-        self.children.insert(i+1, z)
+            del y.children[y.t :]
+        self.children.insert(i + 1, z)
 
     # return i where self.keys[i-1] <= k < self.keys[i]
     def search_local(self, k):
@@ -46,7 +46,7 @@ class Node:
             if self.children[i].should_split():
                 self.split_child(i)
                 if k > self.keys[i]:
-                    i+=1
+                    i += 1
             self.children[i].insert_nonfull(k)
 
     def min_key(self):
@@ -127,17 +127,20 @@ class Node:
             return False
         if self.children[i].n() < self.t:
             i = self.fill_child(i)
-        return self.children[i].delete(k)        
+        return self.children[i].delete(k)
 
     def __repr__(self) -> str:
         return "keys:{}".format(self.keys)
 
+
 from collections import deque
+
+
 class BTree:
     def __init__(self, t):
         assert t > 1, "t must be greater than 1"
         self.t = t
-        self.t2 = t*2
+        self.t2 = t * 2
         self.root = Node(t)
 
     def search(self, k):
@@ -154,7 +157,7 @@ class BTree:
                 nd = nd.children[i]
 
     def split_root(self):
-        s = Node(self.t, leaf = False, children=[self.root])
+        s = Node(self.t, leaf=False, children=[self.root])
         self.root = s
         self.root.split_child(0)
         return self.root
@@ -181,29 +184,62 @@ class BTree:
                 lv[l] = []
             lv[l].append(n)
             for c in n.children:
-                q.append((c, l+1))
+                q.append((c, l + 1))
         for k in sorted(lv.keys()):
             vs = lv[k]
             for v in vs:
                 print(v, end="|")
             print("")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     t = BTree(2)
-    for i in ['F', 'S', 'Q', 'K', 'C', 'L', 'H', 'T','V','W','M','R','N','P','A','B','X','Y','D','Z','E']:
+    for i in [
+        "F",
+        "S",
+        "Q",
+        "K",
+        "C",
+        "L",
+        "H",
+        "T",
+        "V",
+        "W",
+        "M",
+        "R",
+        "N",
+        "P",
+        "A",
+        "B",
+        "X",
+        "Y",
+        "D",
+        "Z",
+        "E",
+    ]:
         t.insert(i)
-    for i in ['F', 'S', 'Q', 'K', 'C', 'L', 'H', 'T','V','W','M','R','N','P','A','B','X','Y','D','Z','E']:
+    for i in [
+        "F",
+        "S",
+        "Q",
+        "K",
+        "C",
+        "L",
+        "H",
+        "T",
+        "V",
+        "W",
+        "M",
+        "R",
+        "N",
+        "P",
+        "A",
+        "B",
+        "X",
+        "Y",
+        "D",
+        "Z",
+        "E",
+    ]:
         t.delete(i)
     t.dump()
-
-
-
-    
-
-
-    
-
-    
-
-
-    

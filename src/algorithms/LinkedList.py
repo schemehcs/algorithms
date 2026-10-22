@@ -1,6 +1,7 @@
 import unittest
 import random
 
+
 class Node:
     def __init__(self, key):
         self.key = key
@@ -43,4 +44,3 @@ class LinkedList:
             else:
                 n = n.next
         return None
-

@@ -1,8 +1,11 @@
 from enum import Enum, auto
+
+
 class Color(Enum):
     WHITE = auto()
     GREY = auto()
     BLACK = auto()
+
 
 class Vertex:
     def __init__(self, key):
@@ -16,7 +19,10 @@ class Vertex:
         self.p = None
 
     def __repr__(self) -> str:
-        return "({}:c={}, d={}, f={}, p={})".format(self.key, self.color, self.d, self.f, self.p)
+        return "({}:c={}, d={}, f={}, p={})".format(
+            self.key, self.color, self.d, self.f, self.p
+        )
+
 
 class Graph:
     def __init__(self, vertices, edges):
@@ -29,7 +35,7 @@ class Graph:
             self.Vmap[vk] = vv
             self.V.add(vv)
             self.Adj[vv] = set()
-        for (uk, vk) in edges:
+        for uk, vk in edges:
             u = self.Vmap[uk]
             v = self.Vmap[vk]
             self.Adj[u].add(v)
@@ -39,7 +45,8 @@ class Graph:
             v.reset()
 
     def transpose(self):
-        return Graph(self.V, [(v, u) for (u,v) in self.E])
+        return Graph(self.V, [(v, u) for (u, v) in self.E])
+
 
 class Edge:
     def __init__(self, u, v, w):
@@ -49,6 +56,7 @@ class Edge:
 
     def __repr__(self) -> str:
         return "({}, {}, {})".format(self.u.key, self.v.key, self.w)
+
 
 class WGraph:
     def __init__(self, vertices, edges):
@@ -62,7 +70,7 @@ class WGraph:
             self.Vmap[vk] = vv
             self.V.add(vv)
             self.Adj[vv] = set()
-        for (uk, vk, w) in edges:
+        for uk, vk, w in edges:
             u = self.Vmap[uk]
             v = self.Vmap[vk]
             self.Adj[u].add(v)
@@ -74,12 +82,14 @@ class WGraph:
         for v in self.V:
             v.reset()
 
+
 # time O(V + E)
 # attributes
 ## 1. find shortest path from s to any other vertices
 ## 2. bfs tree rooted at s
 def bfs(G, s):
     from collections import deque
+
     G.reset()
     s.color = Color.GREY
     s.d = 0
@@ -99,14 +109,16 @@ def bfs(G, s):
                 Q.append(v)
         u.color = Color.BLACK
 
+
 class Counter:
-    def __init__(self, start = 0):
+    def __init__(self, start=0):
         self.counter = start
 
     def next(self):
         c = self.counter
         self.counter += 1
         return c
+
 
 def dfs(G, vertices=None):
     G.reset()
@@ -115,10 +127,11 @@ def dfs(G, vertices=None):
     V = vertices or G.V
     for u in V:
         if u.color == Color.WHITE:
-            circular = (dfs_visit(G, u, counter) or circular)
+            circular = dfs_visit(G, u, counter) or circular
             if circular:
                 print("True here")
     return circular
+
 
 def dfs_visit(G, u, counter):
     u.d = counter.next()
@@ -135,13 +148,15 @@ def dfs_visit(G, u, counter):
     u.f = counter.next()
     return circular
 
+
 def dfs_iter(G):
     G.reset()
     counter = Counter(0)
     for u in G.V:
         if u.color == Color.WHITE:
             dfs_visit_iter(G, u, counter)
-        
+
+
 def dfs_visit_iter(G, u, counter):
     stack = []
     stack.append(u)
@@ -159,35 +174,46 @@ def dfs_visit_iter(G, u, counter):
             u.color = Color.BLACK
             u.f = counter.next()
 
+
 def topological_sort(G):
     if dfs(G):
         return None
     return list(sorted(G.V, key=lambda u: u.f, reverse=True))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     G = Graph(
-        vertices=['v', 's', 'w', 'q', 't', 'x', 'z', 'y', 'r', 'u'],
+        vertices=["v", "s", "w", "q", "t", "x", "z", "y", "r", "u"],
         edges=[
-            ('s', 'v'),
-            ('v', 'w'),
-            ('w', 's'),
-            ('q', 's'),
-            ('q', 'w'),
-            ('q', 't'),
-            ('t', 'y'),
-            ('t', 'x'),
-            ('x', 'z'),
-            ('z', 'x'),
-            ('y', 'q'),
-            ('r', 'y'),
-            ('r', 'u'),
-            ('u', 'y')
-        ]
+            ("s", "v"),
+            ("v", "w"),
+            ("w", "s"),
+            ("q", "s"),
+            ("q", "w"),
+            ("q", "t"),
+            ("t", "y"),
+            ("t", "x"),
+            ("x", "z"),
+            ("z", "x"),
+            ("y", "q"),
+            ("r", "y"),
+            ("r", "u"),
+            ("u", "y"),
+        ],
     )
 
     G2 = Graph(
-        vertices=["undershorts", "socks", "pants",  "shoes", "watch",
-                  "belt", "shirt", "tie", "jacket"],
+        vertices=[
+            "undershorts",
+            "socks",
+            "pants",
+            "shoes",
+            "watch",
+            "belt",
+            "shirt",
+            "tie",
+            "jacket",
+        ],
         edges=[
             ("undershorts", "shoes"),
             ("undershorts", "pants"),
@@ -197,14 +223,11 @@ if __name__ == '__main__':
             ("shirt", "belt"),
             ("shirt", "tie"),
             ("tie", "jacket"),
-            ("belt", "jacket")
-        ]
+            ("belt", "jacket"),
+        ],
     )
 
     ts = topological_sort(G2)
     if ts:
         for t in ts:
             print(t)
-
-    
-

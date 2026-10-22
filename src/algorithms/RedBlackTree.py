@@ -1,6 +1,7 @@
 BLACK = 0
 RED = 1
 
+
 class Node:
     def __init__(self, key, color=BLACK):
         self.size = 1
@@ -10,11 +11,13 @@ class Node:
         self.left = None
         self.right = None
 
+
 NIL = Node(None)
 NIL.size = 0
 
+
 class RbTree:
-    def __init__(self, callback = None):
+    def __init__(self, callback=None):
         self.root = NIL
         self.callback = callback
 
@@ -58,7 +61,7 @@ class RbTree:
     def insert_fixup(self, z: Node):
         while z.p.color is RED:
             if z.p is z.p.p.left:
-                y = z.p.p.right # uncle node
+                y = z.p.p.right  # uncle node
                 if y.color is RED:
                     z.p.color = BLACK
                     y.color = BLACK
@@ -258,14 +261,16 @@ class RbTree:
             if cur_level != e[1]:
                 print("")
                 cur_level = e[1]
-            print("|{}|{}({})".format(e[0].p.key, e[0].key, e[0].size), end= " ")
+            print("|{}|{}({})".format(e[0].p.key, e[0].key, e[0].size), end=" ")
             if e[0].left is not NIL:
-                q.append((e[0].left, e[1]+1))
+                q.append((e[0].left, e[1] + 1))
             if e[0].right is not NIL:
-                q.append((e[0].right, e[1] +1))
+                q.append((e[0].right, e[1] + 1))
         print()
 
+
 from functools import total_ordering
+
 
 @total_ordering
 class Interval:
@@ -283,8 +288,10 @@ class Interval:
     def __repr__(self) -> str:
         return "[{},{}]{}".format(self.low, self.high, self.max)
 
+
 def overlap(ia, ib) -> bool:
     return ia.high >= ib.low and ia.low <= ib.high
+
 
 def interval_search(tree, i):
     x = tree.root
@@ -295,7 +302,10 @@ def interval_search(tree, i):
             x = x.right
     return x
 
+
 from collections import deque
+
+
 def test():
     q = deque()
     T = RbTree()
@@ -314,6 +324,7 @@ def test():
         else:
             print("{}th does not exists")
 
+
 def max_node(node):
     if node.left is NIL and node.right is NIL:
         node.key.max = node.key.high
@@ -324,24 +335,24 @@ def max_node(node):
     else:
         node.key.max = max(node.key.high, node.right.key.max)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     t = RbTree(callback=max_node)
     intervals = [
-        (0,3),
-        (6,10),
-        (5,8),
+        (0, 3),
+        (6, 10),
+        (5, 8),
         (15, 23),
-        (8,9),
+        (8, 9),
         (16, 21),
         (25, 30),
         (17, 19),
         (26, 26),
-        (19, 20)
-        ]
-    for (l, h) in intervals:
+        (19, 20),
+    ]
+    for l, h in intervals:
         n = Interval(l, h)
         t.insert(Node(n))
 
     p = interval_search(t, Interval(31, 41))
     print(p and p.key)
-

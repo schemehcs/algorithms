@@ -1,6 +1,7 @@
 import unittest
 import random
 
+
 class TreeNode:
     def __init__(self, v):
         self.key = v
@@ -41,7 +42,7 @@ class TreeNode:
                 x = x.left
             else:
                 x.left = TreeNode(v)
-                return 
+                return
 
     def inorder(self, f):
         if self.left != None:
@@ -64,7 +65,7 @@ class TreeNode:
                     stack.append(n.left)
             else:
                 f(n.key)
-    
+
     def preorder(self, f):
         f(self.key)
         if self.left != None:
@@ -159,7 +160,7 @@ class Tree:
             u.p.right = v
         if v:
             v.p = u.p
-        
+
     def delete(self, u):
         if not u.left:
             self.transplant(u, u.right)
@@ -175,6 +176,7 @@ class Tree:
             y.left = u.left
             y.left.p = y
 
+
 class Tests(unittest.TestCase):
     def test_binary_tree(self):
         tree = Tree()
@@ -189,6 +191,6 @@ class Tests(unittest.TestCase):
         if tree.root:
             print(tree.root.key)
 
-if __name__ == '__main__':
-    unittest.main()
 
+if __name__ == "__main__":
+    unittest.main()

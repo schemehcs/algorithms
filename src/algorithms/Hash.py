@@ -1,20 +1,25 @@
-import random 
+import random
+
 
 def hash_division(x, m):
     return x % m
+
 
 # const A
 # example A = math.pi % 1
 def hash_multiplication(x, A, m):
     return int(m * (x * A % 1))
 
+
 def hash_multiply_shift(k, a, w, l):
-    return (k*a % (2**w)) >> (w-l)
+    return (k * a % (2**w)) >> (w - l)
+
 
 def hash_suite(p):
     a = random.randrange(1, p)
     b = random.randrange(p)
     return lambda key: (a * key + b) % p
+
 
 # Hash table mode: open address
 # linear probe
@@ -25,8 +30,9 @@ def hash_insert(T, hf, k, v):
             T[key] = (k, v)
             return
         else:
-            key = (key+1) % len(T)
+            key = (key + 1) % len(T)
     raise RuntimeError("hash table is full")
+
 
 def hash_search(T, hf, k):
     key = hf(k) % len(T)
@@ -39,9 +45,11 @@ def hash_search(T, hf, k):
             key = (key + 1) % len(T)
     return None
 
+
 def g(T, hf, k, q):
     key = hf(k)
     return (q - key) % len(T)
+
 
 def hash_delete_inner(T, hf, q):
     while True:
@@ -56,6 +64,7 @@ def hash_delete_inner(T, hf, q):
                 q = qd
                 break
 
+
 def hash_delete(T, hf, k):
     key = hf(k) % len(T)
     for _ in range(len(T)):
@@ -67,11 +76,12 @@ def hash_delete(T, hf, k):
             return entry
     return None
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     T = [None] * (2**9)
     hf = hash_suite(701)
     for i in range(100, 200):
-        hash_insert(T, hf, i, i*2)
+        hash_insert(T, hf, i, i * 2)
     print(hash_search(T, hf, 22))
     print(hash_search(T, hf, 150))
     print(hash_delete(T, hf, 22))
@@ -81,6 +91,3 @@ if __name__ == '__main__':
     print(hash_search(T, hf, 150))
     hash_delete(T, hf, 150)
     print(hash_search(T, hf, 150))
-    
-    
-
