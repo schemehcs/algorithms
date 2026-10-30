@@ -1,14 +1,10 @@
-import random
-import unittest
-
-
 class TreeNode:
     def __init__(self, v):
         self.key = v
         self.right = self.left = None
         self.p = None
-        self.color = 0
 
+    # O(h) time, where h is the tree height.
     def insert(self, v):
         if self.key == v:
             raise ValueError("value collision")
@@ -27,6 +23,7 @@ class TreeNode:
             else:
                 self.left.insert(v)
 
+    # O(h) time, where h is the tree height.
     def insert_nonrec(self, v):
         x = self
         while True:
@@ -37,13 +34,16 @@ class TreeNode:
                     x = x.right
                 else:
                     x.right = TreeNode(v)
+                    x.right.p = x
                     return
             elif x.left:
                 x = x.left
             else:
                 x.left = TreeNode(v)
+                x.left.p = x
                 return
 
+    # O(n) time and O(h) recursion space.
     def inorder(self, f):
         if self.left is not None:
             self.left.inorder(f)
@@ -51,21 +51,19 @@ class TreeNode:
         if self.right is not None:
             self.right.inorder(f)
 
+    # O(n) time and O(h) stack space.
     def inorder_nonrec(self, f):
         stack = []
-        stack.append(self)
-        while stack:
-            n = stack.pop()
-            if n.color == 0:
-                if n.right is not None:
-                    stack.append(n.right)
-                n.color = 1
-                stack.append(n)
-                if n.left is not None:
-                    stack.append(n.left)
-            else:
-                f(n.key)
+        node = self
+        while stack or node is not None:
+            while node is not None:
+                stack.append(node)
+                node = node.left
+            node = stack.pop()
+            f(node.key)
+            node = node.right
 
+    # O(n) time and O(h) recursion space.
     def preorder(self, f):
         f(self.key)
         if self.left is not None:
@@ -73,17 +71,19 @@ class TreeNode:
         if self.right is not None:
             self.right.preorder(f)
 
+    # O(n) time and O(h) stack space.
     def preorder_nonrec(self, f):
         stack = []
         stack.append(self)
         while stack:
             n = stack.pop()
-            if n.r is not None:
-                stack.append(n.r)
-            if n.l is not None:
-                stack.append(n.l)
-            f(n.v)
+            f(n.key)
+            if n.right is not None:
+                stack.append(n.right)
+            if n.left is not None:
+                stack.append(n.left)
 
+    # O(n) time and O(h) recursion space.
     def postorder(self, f):
         if self.left is not None:
             self.left.postorder(f)
@@ -91,54 +91,58 @@ class TreeNode:
             self.right.postorder(f)
         f(self.key)
 
-    def postorer_nonrec(self, f):
-        stack = []
-        self.color = 0
-        stack.append(self)
+    # O(n) time and O(h) stack space.
+    def postorder_nonrec(self, f):
+        stack = [(self, False)]
         while stack:
-            n = stack.pop()
-            if n.color == 0:
-                n.color = 1
-                if n.r:
-                    n.r.color = 0
-                    stack.append(n.r)
-                if n.l:
-                    n.l.color = 0
-                    stack.append(n.l)
-                stack.append(n)
-            if n.color == 1:
-                f(n.v)
+            node, visited = stack.pop()
+            if visited:
+                f(node.key)
+            else:
+                stack.append((node, True))
+                if node.right is not None:
+                    stack.append((node.right, False))
+                if node.left is not None:
+                    stack.append((node.left, False))
 
+    def postorer_nonrec(self, f):
+        self.postorder_nonrec(f)
+
+    # O(h) time.
     def min(self):
         n = self
         while n.left:
             n = n.left
         return n
 
+    # O(h) time.
     def max(self):
         n = self
         while n.right:
             n = n.right
+        return n
 
+    # O(h) time.
     def predcessor(self):
         if self.left is not None:
             return self.left.max()
         x = self
         y = x.p
-        while y and x == y.right:
+        while y and x == y.left:
             x = y
             y = y.p
-        return None
+        return y
 
+    # O(h) time.
     def succesor(self):
         if self.right is not None:
             return self.right.min()
         x = self
         y = x.p
-        while y and x == y.left:
+        while y and x == y.right:
             x = y
             y = y.p
-        return None
+        return y
 
 
 class Tree:
@@ -161,6 +165,7 @@ class Tree:
         if v:
             v.p = u.p
 
+    # O(h) time.
     def delete(self, u):
         if not u.left:
             self.transplant(u, u.right)
@@ -175,22 +180,3 @@ class Tree:
             self.transplant(u, y)
             y.left = u.left
             y.left.p = y
-
-
-class Tests(unittest.TestCase):
-    def test_binary_tree(self):
-        tree = Tree()
-        ls = []
-        for _ in range(20):
-            tree.insert(random.randrange(1000))
-        if tree.root:
-            tree.root.inorder(lambda v: ls.append(v))
-        print(list(map(lambda n: n.key, ls)))
-        for n in ls[:-1]:
-            tree.delete(n)
-        if tree.root:
-            print(tree.root.key)
-
-
-if __name__ == "__main__":
-    unittest.main()

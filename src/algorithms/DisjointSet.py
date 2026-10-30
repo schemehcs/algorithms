@@ -1,4 +1,5 @@
 class Node:
+    # O(1) time.
     def __init__(self, key):
         self.key = key
         self.rank = 0
@@ -6,14 +7,19 @@ class Node:
 
 
 class DisjointSet:
+    # O(n) time and space for n keys.
+    # O(1) time.
     def __init__(self, keys):
         self.kn = dict()
         for k in keys:
             self.kn[k] = Node(k)
 
+    # Amortized O(alpha(n)) time with path compression and union by rank.
     def union(self, ka, kb):
         a = self.find(ka)
         b = self.find(kb)
+        if a is b:
+            return
         if a.rank > b.rank:
             b.p = a
         else:
@@ -21,9 +27,11 @@ class DisjointSet:
             if a.rank == b.rank:
                 b.rank += 1
 
+    # Amortized O(alpha(n)) time with path compression and union by rank.
     def find(self, ka):
         return self._find(self.kn[ka])
 
+    # O(alpha(n)) amortized time with path compression and union by rank.
     def _find(self, a):
         if a is not a.p:
             a.p = self._find(a.p)

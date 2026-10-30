@@ -5,12 +5,13 @@ from .disjointset import DisjointSet
 from .graph import Color, WGraph
 
 
+# O(E log E) time and O(V + E) space.
 def kruskal(WG):
     ds = DisjointSet(WG.vertices)
     sorted_edges = sorted(WG.edges)
     edges = []
     for e in sorted_edges:
-        if not ds.find(e.u) is ds.find(e.v):
+        if ds.find(e.u) is not ds.find(e.v):
             ds.union(e.u, e.v)
             edges.append(e)
     return edges
@@ -25,10 +26,14 @@ class PriorityNode:
         return self.e.w == other.e.w
 
     def __lt__(self, other):
-        return self.e.w <= other.e.w
+        return self.e.w < other.e.w
 
 
+# O(E log E) time and O(E) space with a binary heap.
 def prim(WG):
+    WG.reset()
+    if not WG.vertices:
+        return set()
     heap = []
     s = WG.vertices[0]
     v_cnt = 1

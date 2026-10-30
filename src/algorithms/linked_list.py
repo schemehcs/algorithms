@@ -1,7 +1,3 @@
-import random
-import unittest
-
-
 class Node:
     def __init__(self, key):
         self.key = key
@@ -16,9 +12,11 @@ class LinkedList:
         self.head = None
         self.tail = None
 
+    # O(1) time.
     def is_empty(self):
         return self.head is None
 
+    # O(1) time and space.
     def append(self, v):
         if self.tail is None:
             self.head = self.tail = Node(v)
@@ -27,6 +25,7 @@ class LinkedList:
             self.tail.next = n
             self.tail = n
 
+    # O(1) time.
     def pop_left(self):
         if self.head is None:
             return None
@@ -36,6 +35,7 @@ class LinkedList:
             self.tail = None
         return n.key
 
+    # O(n) time and O(1) extra space.
     def search(self, v):
         n = self.head
         while n:

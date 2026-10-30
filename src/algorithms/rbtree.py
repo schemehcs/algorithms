@@ -18,18 +18,20 @@ class Node:
         self.right = None
 
 
-NIL = Node(None)
-NIL.size = 0
-
-
 class RbTree:
     def __init__(self, callback=None):
-        self.root = NIL
+        self.nil = Node(None)
+        self.nil.size = 0
+        self.nil.left = self.nil
+        self.nil.right = self.nil
+        self.nil.p = self.nil
+        self.root = self.nil
         self.callback = callback
 
+    # O(log n) time.
     def search(self, key):
         x = self.root
-        while x is not NIL:
+        while x is not self.nil:
             if x.key == key:
                 return x
             elif x.key > key:
@@ -38,32 +40,34 @@ class RbTree:
                 x = x.right
         return None
 
+    # O(log n) time.
     def insert(self, z: Node):
         x = self.root
-        y = NIL
-        while x is not NIL:
+        y = self.nil
+        while x is not self.nil:
             y = x
             x.size += 1
             if x.key > z.key:
                 x = x.left
             else:
                 x = x.right
-        if y is NIL:
+        if y is self.nil:
             self.root = z
         elif y.key > z.key:
             y.left = z
         else:
             y.right = z
         z.p = y
-        z.left = NIL
-        z.right = NIL
+        z.left = self.nil
+        z.right = self.nil
         z.color = Color.RED
         if self.callback:
-            while y is not NIL:
+            while y is not self.nil:
                 self.callback(y)
                 y = y.p
         self.insert_fixup(z)
 
+    # O(log n) time.
     def insert_fixup(self, z: Node):
         while z.p.color is Color.RED:
             if z.p is z.p.p.left:
@@ -96,43 +100,48 @@ class RbTree:
                     self.left_rotate(z.p.p)
         self.root.color = Color.BLACK
 
+    # O(log n) time.
     def delete(self, z):
         y = z
         y_original_color = y.color
-        if z.left is NIL:
+        if z.left is self.nil:
             x = z.right
+            p = z.p
             self.transplant(z, z.right)
-            p = z.p
-        elif z.right is NIL:
+        elif z.right is self.nil:
             x = z.left
-            self.transplant(z, z.left)
             p = z.p
+            self.transplant(z, z.left)
         else:
             y = self.minimum(z.right)
             y_original_color = y.color
             x = y.right
             if y is not z.right:
+                p = y.p
                 self.transplant(y, y.right)
                 y.right = z.right
                 y.right.p = y
-                p = y.p
             else:
                 x.p = y
-                p = z.p
+                p = y
             self.transplant(z, y)
-            y.size = z.size - 1
             y.left = z.left
             y.left.p = y
             y.color = z.color
-        while p is not NIL:
-            p.size -= 1
-            if self.callback:
-                self.callback(p)
-            p = p.p
+        self._recompute_up(p)
 
         if y_original_color is Color.BLACK:
             self.delete_fixup(x)
 
+    # O(log n) time, excluding optional callback work.
+    def _recompute_up(self, node):
+        while node is not self.nil:
+            node.size = node.left.size + node.right.size + 1
+            if self.callback:
+                self.callback(node)
+            node = node.p
+
+    # O(log n) time.
     def delete_fixup(self, x):
         while x is not self.root and x.color is Color.BLACK:
             if x is x.p.left:
@@ -181,13 +190,13 @@ class RbTree:
                     w.color = x.p.color
                     x.p.color = Color.BLACK
                     w.left.color = Color.BLACK
-                    w.left.color = Color.BLACK
                     self.right_rotate(x.p)
                     x = self.root
         x.color = Color.BLACK
 
+    # O(1) time.
     def transplant(self, u, v):
-        if u.p is NIL:
+        if u.p is self.nil:
             self.root = v
         elif u.p.left is u:
             u.p.left = v
@@ -195,14 +204,15 @@ class RbTree:
             u.p.right = v
         v.p = u.p
 
+    # O(1) time, excluding optional callback work.
     def left_rotate(self, x):
         y = x.right
-        if y is NIL:
+        if y is self.nil:
             return
         x.right = y.left
-        if x.right is not NIL:
+        if x.right is not self.nil:
             x.right.p = x
-        if x.p is NIL:
+        if x.p is self.nil:
             self.root = y
         elif x.p.left is x:
             x.p.left = y
@@ -215,18 +225,19 @@ class RbTree:
         x.size = x.left.size + x.right.size + 1
         if self.callback:
             n = x
-            while n is not NIL:
+            while n is not self.nil:
                 self.callback(n)
                 n = n.p
 
+    # O(1) time, excluding optional callback work.
     def right_rotate(self, y):
         x = y.left
-        if x is NIL:
+        if x is self.nil:
             return
         y.left = x.right
-        if y.left is not NIL:
+        if y.left is not self.nil:
             y.left.p = y
-        if y.p is NIL:
+        if y.p is self.nil:
             self.root = x
         elif y.p.left is y:
             y.p.left = x
@@ -239,18 +250,20 @@ class RbTree:
         y.size = y.left.size + y.right.size + 1
         if self.callback:
             n = y
-            while n is not NIL:
+            while n is not self.nil:
                 self.callback(n)
                 n = n.p
 
+    # O(log n) time.
     def minimum(self, u):
-        while u.left is not NIL:
+        while u.left is not self.nil:
             u = u.left
         return u
 
+    # O(log n) time using subtree sizes.
     def nth(self, n):
         x = self.root
-        if x is NIL or x.size < n:
+        if n < 1 or x is self.nil or x.size < n:
             return None
         while True:
             if x.left.size + 1 == n:
@@ -261,15 +274,16 @@ class RbTree:
                 n = n - x.left.size - 1
                 x = x.right
 
+    # O(n) time and O(n) extra space.
     def dump(self):
+        if self.root is self.nil:
+            return
         q = deque()
         x = self.root
         q.append((x, 0))
         cur_level = 0
-        al = []
         while q:
             e = q.popleft()
-            al.append(e[0])
             if cur_level != e[1]:
                 print("")
                 cur_level = e[1]
@@ -277,9 +291,9 @@ class RbTree:
                 "|{}|{}({})".format(e[0].p.key, e[0].key, e[0].size),
                 end=" ",
             )
-            if e[0].left is not NIL:
+            if e[0].left is not self.nil:
                 q.append((e[0].left, e[1] + 1))
-            if e[0].right is not NIL:
+            if e[0].right is not self.nil:
                 q.append((e[0].right, e[1] + 1))
         print()
 
@@ -291,57 +305,45 @@ class Interval:
         self.high = high
         self.max = high
 
-    def __eq__(self, value) -> bool:
-        return self.low == value.low
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Interval):
+            return NotImplemented
+        return (self.low, self.high) == (other.low, other.high)
 
-    def __le__(self, other):
-        return self.low < other.low
+    def __lt__(self, other):
+        if not isinstance(other, Interval):
+            return NotImplemented
+        return (self.low, self.high) < (other.low, other.high)
 
     def __repr__(self) -> str:
         return "[{},{}]{}".format(self.low, self.high, self.max)
 
 
+# O(1) time.
 def overlap(ia, ib) -> bool:
     return ia.high >= ib.low and ia.low <= ib.high
 
 
+# O(log n) time for a balanced tree.
 def interval_search(tree, i):
     x = tree.root
-    while x is not NIL and not overlap(x.key, i):
-        if x.left is not NIL and x.left.key.max >= i.low:
+    while x is not tree.nil and not overlap(x.key, i):
+        if x.left is not tree.nil and x.left.key.max >= i.low:
             x = x.left
         else:
             x = x.right
     return x
 
 
-def test():
-    q = deque()
-    T = RbTree()
-    for i in range(1, 20):
-        T.insert(Node(i))
-    T.dump()
-    n10 = T.search(10)
-    n13 = T.search(13)
-    T.delete(n10)
-    T.delete(n13)
-    T.dump()
-    for n in range(1, 20):
-        nth = T.nth(n)
-        if nth:
-            print("{}th={}".format(n, T.nth(n).key))
-        else:
-            print("{}th does not exists")
-
-
+# O(1) time, excluding the callback work it computes.
 def max_node(node):
-    if node.left is NIL and node.right is NIL:
+    if node.left.size == 0 and node.right.size == 0:
         node.key.max = node.key.high
-    elif node.left is not NIL and node.right is not NIL:
+    elif node.left.size != 0 and node.right.size != 0:
         node.key.max = max(
             node.key.high, node.left.key.max, node.right.key.max
         )
-    elif node.left is not NIL:
+    elif node.left.size != 0:
         node.key.max = max(node.key.high, node.left.key.max)
     else:
         node.key.max = max(node.key.high, node.right.key.max)

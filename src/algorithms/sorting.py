@@ -1,7 +1,7 @@
 import random
-import unittest
 
 
+# O(n^2) worst-case time, O(n) best-case time, and O(1) extra space.
 def insertion_sort(l: list[int]):
     for i in range(1, len(l)):
         for j in range(i, 0, -1):
@@ -11,6 +11,7 @@ def insertion_sort(l: list[int]):
                 break
 
 
+# O(n^2) time and O(1) extra space.
 def insertion_sort_rev(l: list[int]):
     for i in range(1, len(l)):
         for j in range(i, 0, -1):
@@ -18,6 +19,7 @@ def insertion_sort_rev(l: list[int]):
                 l[j - 1], l[j] = l[j], l[j - 1]
 
 
+# O(n^2) time and O(n) recursion space.
 def insertion_sort_rec(l: list[int], p: int):
     if p > 0:
         insertion_sort_rec(l, p - 1)
@@ -26,6 +28,7 @@ def insertion_sort_rec(l: list[int], p: int):
             p -= 1
 
 
+# O(n log n) time and O(n) extra space.
 def merge_sort(l: list[int]):
     def merge(s, mid, e, stage):
         si = ai = s
@@ -60,6 +63,7 @@ def merge_sort(l: list[int]):
     merge_sort_inner(0, len(l), [0] * len(l))
 
 
+# O(n log n) time and O(n) extra space because the input is sorted first.
 def search_sum_of_2(ls: list[int], s: int) -> tuple[int, int] | None:
     merge_sort(ls)
     i, j = 0, len(ls) - 1
@@ -74,6 +78,7 @@ def search_sum_of_2(ls: list[int], s: int) -> tuple[int, int] | None:
     return None
 
 
+# O(n) time and O(1) extra space.
 def linear_search(x: int, l: list[int]) -> int | None:
     for i, lx in enumerate(l):
         if lx == x:
@@ -81,6 +86,7 @@ def linear_search(x: int, l: list[int]) -> int | None:
     return None
 
 
+# O(log n) time and O(1) extra space; input must be sorted.
 def binary_search(ls: list[int], e: int) -> None | int:
     if len(ls) == 0:
         return None
@@ -97,6 +103,7 @@ def binary_search(ls: list[int], e: int) -> None | int:
     return None
 
 
+# O(n) time and O(n) output space.
 def adder(a, b) -> list[int]:
     carry = 0
     if len(a) > len(b):
@@ -118,6 +125,7 @@ def adder(a, b) -> list[int]:
     return c
 
 
+# O(n^2) time and O(1) extra space.
 def selection_sort(l: list[int]):
     for i in range(0, len(l)):
         min_i = i
@@ -148,6 +156,7 @@ def right(idx: int) -> int:
     return idx * 2 + 2
 
 
+# O(log n) time.
 def bubble_up(heap: list[int], idx: int, cmp):
     while idx != 0:
         pidx = parent(idx)
@@ -158,6 +167,7 @@ def bubble_up(heap: list[int], idx: int, cmp):
         idx = pidx
 
 
+# O(log n) time.
 def push_down(heap: list[int], idx: int, heap_size: int, cmp):
     while idx < heap_size:
         candidate = idx
@@ -172,6 +182,7 @@ def push_down(heap: list[int], idx: int, heap_size: int, cmp):
             return
 
 
+# O(n log n) time and O(n) extra space.
 def build_heap(raw: list[int], cmp) -> list[int]:
     heap = [0] * len(raw)
     for i, e in enumerate(raw):
@@ -180,6 +191,7 @@ def build_heap(raw: list[int], cmp) -> list[int]:
     return heap
 
 
+# O(n) time and O(1) extra space.
 def heapify(raw: list[int], cmp):
     heap_size = len(raw)
     pivot = parent(heap_size - 1)
@@ -188,6 +200,7 @@ def heapify(raw: list[int], cmp):
         pivot -= 1
 
 
+# O(log n) time.
 def heap_extract(heap: list[int], heap_size: int, cmp) -> None | int:
     if heap_size == 0:
         return None
@@ -196,6 +209,7 @@ def heap_extract(heap: list[int], heap_size: int, cmp) -> None | int:
     return heap[heap_size - 1]
 
 
+# O(n log n) time and O(1) extra space.
 def heap_sort(ls: list[int], cmp):
     heapify(ls, cmp)
     heap_size = len(ls)
@@ -214,10 +228,12 @@ class Heap:
         else:
             self.heap = []
 
+    # O(log n) time.
     def append(self, e):
         self.heap.append(e)
         bubble_up(self.heap, len(self.heap) - 1, self.ord)
 
+    # O(log n) time.
     def extract(self) -> None | int:
         if self.heap:
             self.heap[0], self.heap[-1] = self.heap[-1], self.heap[0]
@@ -228,28 +244,42 @@ class Heap:
             return None
 
 
+# O(n log n) average time, O(n^2) worst-case time, and O(log n) extra space.
 def quick_sort(ls: list[int]):
-    def partition(s: int, e: int, pivot: int) -> int:
-        ls[pivot], ls[e - 1] = ls[e - 1], ls[pivot]
-        i = s
-        for j in range(s, e - 1):
-            if ls[j] < ls[e - 1]:
-                ls[j], ls[i] = ls[i], ls[j]
-                i += 1
-        ls[e - 1], ls[i] = ls[i], ls[e - 1]
-        return i
+    ranges = [(0, len(ls))]
+    while ranges:
+        start, stop = ranges.pop()
+        while stop - start > 1:
+            pivot = ls[random.randrange(start, stop)]
+            lower = current = start
+            upper = stop
+            while current < upper:
+                if ls[current] < pivot:
+                    ls[lower], ls[current] = ls[current], ls[lower]
+                    lower += 1
+                    current += 1
+                elif ls[current] > pivot:
+                    upper -= 1
+                    ls[current], ls[upper] = ls[upper], ls[current]
+                else:
+                    current += 1
 
-    def quick_sort_inner(s, e):
-        if s < e:
-            pivot = random.randrange(s, e)
-            pos = partition(s, e, pivot)
-            quick_sort_inner(s, pos)
-            quick_sort_inner(pos + 1, e)
+            left_size = lower - start
+            right_size = stop - upper
+            if left_size < right_size:
+                if right_size > 1:
+                    ranges.append((upper, stop))
+                stop = lower
+            else:
+                if left_size > 1:
+                    ranges.append((start, lower))
+                start = upper
 
-    quick_sort_inner(0, len(ls))
 
-
+# O(n + k) time and O(k) extra space, where k = e - s.
 def counting_sort(ls: list[int], s: int, e: int):
+    if e < s:
+        raise ValueError("range end must not be less than range start")
     stage = [0] * (e - s)
     for i in ls:
         if i < s or i >= e:
@@ -262,8 +292,7 @@ def counting_sort(ls: list[int], s: int, e: int):
             i += 1
 
 
-# worst cost O(n^2)
-# expected O(n)
+# O(n) time and O(1) extra space for a single partition.
 def parition(ls: list[int], start, stop, pivot) -> int:
     i = start
     ls[pivot], ls[stop - 1] = ls[stop - 1], ls[pivot]
@@ -275,7 +304,10 @@ def parition(ls: list[int], start, stop, pivot) -> int:
     return i
 
 
+# Expected O(n) time and O(1) extra space; worst-case time is O(n^2).
 def select_by_partition(ls: list[int], s: int, e: int, nth: int) -> int | None:
+    if s < 0 or e > len(ls) or s > e or nth < 0:
+        return None
     while s < e and nth < e - s:
         pivot = random.randrange(s, e)
         i = parition(ls, s, e, pivot)
@@ -296,9 +328,9 @@ def step_sort(ls: list[int], start: int, stop: int, step: int):
                 ls[j], ls[j - step] = ls[j - step], ls[j]
 
 
-# worst case O(n)
+# Worst-case O(n) time using median-of-medians; recursion uses O(log n) space.
 def select(ls: list[int], s: int, e: int, nth: int) -> int | None:
-    if e - s <= nth:
+    if s < 0 or e > len(ls) or s > e or nth < 0 or e - s <= nth:
         return None
     while (e - s) % 5 != 0:
         for i in range(s + 1, e):
@@ -322,17 +354,3 @@ def select(ls: list[int], s: int, e: int, nth: int) -> int | None:
         return select(ls, i + 1, e, nth - (i + 1 - s))
     else:
         return select(ls, s, i, nth)
-
-
-class Tests(unittest.TestCase):
-    def testme(self):
-        ls = [11, 33, 44, 88, 5, 4, 8, 1, 22, 66, 55]
-        idx = select(ls, 0, len(ls), 20)
-        if idx is None:
-            print("Not found")
-        else:
-            print("pos:{}, val: {}, ls={}".format(idx, ls[idx], ls))
-
-
-if __name__ == "__main__":
-    unittest.main()

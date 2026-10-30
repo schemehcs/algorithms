@@ -3,7 +3,7 @@ import pprint
 from .graph import WGraph
 
 
-# O(|V|^3)
+# O(V^3) time and O(V^2) space.
 def floyd_warshall(G):
     distances = copy.deepcopy(G.matrix)
     predecessors = copy.deepcopy(G.matrix)
@@ -16,7 +16,11 @@ def floyd_warshall(G):
     n = len(distances)
     for k in range(n):
         for i in range(n):
+            if distances[i][k] == float("inf"):
+                continue
             for j in range(n):
+                if distances[k][j] == float("inf"):
+                    continue
                 through_k = distances[i][k] + distances[k][j]
                 if through_k < distances[i][j]:
                     distances[i][j] = through_k

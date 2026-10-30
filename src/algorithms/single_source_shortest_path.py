@@ -2,6 +2,7 @@ from pqdict import pqdict
 from .graph import WGraph
 
 
+# O(V) time and O(1) extra space.
 def init_graph(G, s):
     ss = G.vertex_map[s]
     for v in G.vertices:
@@ -12,15 +13,12 @@ def init_graph(G, s):
             v.d = float("inf")
 
 
-def relax(G, u, v):
-    if v.d > u.d + G.weights[u, v]:
-        v.d = u.d + G.weights[u, v]
-        v.p = u
-
-
-# constraint: all edges must be positive
+# O((V + E) log V) time and O(V) space with an indexed priority queue.
+# Requires non-negative edge weights.
 def dijkstra(G, s):
     pq = pqdict()
+    if any(edge.w < 0 for edge in G.edges):
+        raise ValueError("Dijkstra requires non-negative edge weights")
     init_graph(G, s)
     for v in G.vertices:
         pq.additem(v, v.d)
@@ -33,11 +31,15 @@ def dijkstra(G, s):
                     pq[e.v] = e.v.d
 
 
+# O(VE) time and O(V) extra space.
 def bellman_ford(G, s):
     init_graph(G, s)
     for _ in range(len(G.vertices) - 1):
+        changed = False
         for e in G.edges:
-            e.relax()
+            changed = e.relax() or changed
+        if not changed:
+            break
     for e in G.edges:
         if e.v.d > e.u.d + e.w:
             return False

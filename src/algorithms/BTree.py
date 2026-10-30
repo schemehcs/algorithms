@@ -2,6 +2,7 @@ from collections import deque
 
 
 class Node:
+    # O(t) time when initializing supplied children.
     def __init__(self, t, leaf=True, keys=None, children=None):
         assert t > 1, "node t must be greater than 1"
         self.p = None
@@ -13,12 +14,15 @@ class Node:
         for c in self.children:
             c.p = self
 
+    # O(1) time.
     def n(self):
         return len(self.keys)
 
+    # O(1) time.
     def should_split(self):
         return self.n() == self.t2 - 1
 
+    # O(t) time for minimum degree t.
     def split_child(self, i):
         y = self.children[i]
         keys = y.keys[y.t : y.t2]
@@ -35,12 +39,14 @@ class Node:
         self.children.insert(i + 1, z)
 
     # return i where self.keys[i-1] <= k < self.keys[i]
+    # O(t) time.
     def search_local(self, k):
         i = self.n() - 1
         while i >= 0 and k < self.keys[i]:
             i -= 1
         return i + 1
 
+    # O(t log_t n) time for a tree containing n keys.
     def insert_nonfull(self, k):
         i = self.search_local(k)
         if self.leaf:
@@ -52,18 +58,21 @@ class Node:
                     i += 1
             self.children[i].insert_nonfull(k)
 
+    # O(log_t n) time.
     def min_key(self):
         nd = self
         while not nd.leaf:
             nd = nd.children[0]
         return nd.keys[0]
 
+    # O(log_t n) time.
     def max_key(self):
         nd = self
         while not nd.leaf:
             nd = nd.children[-1]
         return nd.keys[-1]
 
+    # O(t) time.
     def merge_child(self, i):
         y = self.children[i]
         z = self.children[i + 1]
@@ -75,6 +84,7 @@ class Node:
             y.children.extend(z.children)
         del self.children[i + 1]
 
+    # O(t) time due to shifting keys and child references.
     def borrow_from_prev(self, i):
         c, s = self.children[i], self.children[i - 1]
         c.keys.insert(0, self.keys[i - 1])
@@ -84,6 +94,7 @@ class Node:
             ch.p = c
             c.children.insert(0, ch)
 
+    # O(t) time due to shifting keys and child references.
     def borrow_from_next(self, i):
         c, s = self.children[i], self.children[i + 1]
         c.keys.append(self.keys[i])
@@ -93,6 +104,7 @@ class Node:
             ch.p = c
             c.children.append(ch)
 
+    # O(t) time.
     def fill_child(self, i):
         if i > 0 and self.children[i - 1].n() >= self.t:
             self.borrow_from_prev(i)
@@ -106,6 +118,7 @@ class Node:
         self.merge_child(i - 1)
         return i - 1
 
+    # O(t log_t n) time for a tree containing n keys.
     def delete(self, k):
         i = 0
         while i < self.n() and k > self.keys[i]:
@@ -143,6 +156,7 @@ class BTree:
         self.t2 = t * 2
         self.root = Node(t)
 
+    # O(log_t n) time.
     def search(self, k):
         nd = self.root
         while True:
@@ -156,17 +170,20 @@ class BTree:
             else:
                 nd = nd.children[i]
 
+    # O(t) time.
     def split_root(self):
         s = Node(self.t, leaf=False, children=[self.root])
         self.root = s
         self.root.split_child(0)
         return self.root
 
+    # O(log n) time for fixed minimum degree t.
     def insert(self, k):
         if self.root.should_split():
             self.split_root()
         self.root.insert_nonfull(k)
 
+    # O(log n) time for fixed minimum degree t.
     def delete(self, k):
         ok = self.root.delete(k)
         if self.root.n() == 0 and not self.root.leaf:
@@ -174,6 +191,7 @@ class BTree:
             self.root.p = None
         return ok
 
+    # O(n) time and O(n) extra space for n stored keys.
     def dump(self):
         lv = dict()
         q = deque()
