@@ -77,18 +77,19 @@ class Edge:
     def __repr__(self) -> str:
         return f"({self.u.key}, {self.v.key}, {self.w})"
 
-    # 1. 让 total_ordering 依据权重进行大小排序（完美适配 Kruskal 的 sorted 和 Prim 的 heapq）
+    # 1. Let total_ordering sort by weight for sorted in Kruskal and heapq in Prim.
     def __lt__(self, other):
         return self.w < other.w
 
-    # 2. 只有当起点、终点和权重完全一致时，才算同一条边（有向边逻辑）
-    # 如果是无向边，且邻接表 AdjE 里存了双向，直接严格对比也最安全
+    # 2. Edges are equal only when source, destination, and weight match.
+    # For undirected graphs with both directions in the adjacency lists, strict
+    # comparison is still the safest choice.
     def __eq__(self, other):
         if not isinstance(other, Edge):
             return False
         return (self.u, self.v, self.w) == (other.u, other.v, other.w)
 
-    # 3. 伴随严格的 __eq__，实现对应的 __hash__，彻底解决 Unhashable 问题
+    # 3. Implement __hash__ to match __eq__ so Edge instances are hashable.
     def __hash__(self):
         return hash((self.u, self.v, self.w))
 
