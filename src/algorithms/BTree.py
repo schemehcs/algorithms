@@ -1,3 +1,6 @@
+from collections import deque
+
+
 class Node:
     def __init__(self, t, leaf=True, keys=None, children=None):
         assert t > 1, "node t must be greater than 1"
@@ -131,9 +134,6 @@ class Node:
 
     def __repr__(self) -> str:
         return "keys:{}".format(self.keys)
-
-
-from collections import deque
 
 
 class BTree:

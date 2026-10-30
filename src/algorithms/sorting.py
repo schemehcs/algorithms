@@ -1,5 +1,5 @@
-import unittest
 import random
+import unittest
 
 
 def insertion_sort(l: list[int]):
@@ -128,8 +128,12 @@ def selection_sort(l: list[int]):
             l[min_i], l[i] = l[i], l[min_i]
 
 
-min_cmp = lambda a, b: a < b
-max_cmp = lambda a, b: a > b
+def min_cmp(a, b):
+    return a < b
+
+
+def max_cmp(a, b):
+    return a > b
 
 
 def parent(idx: int) -> int:
@@ -324,7 +328,7 @@ class Tests(unittest.TestCase):
     def testme(self):
         ls = [11, 33, 44, 88, 5, 4, 8, 1, 22, 66, 55]
         idx = select(ls, 0, len(ls), 20)
-        if idx == None:
+        if idx is None:
             print("Not found")
         else:
             print("pos:{}, val: {}, ls={}".format(idx, ls[idx], ls))

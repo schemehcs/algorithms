@@ -1,4 +1,8 @@
 # activity selection
+import heapq
+from functools import total_ordering
+
+
 s = [1, 3, 0, 5, 3, 5, 6, 7, 8, 2, 12][::-1]
 f = [4, 5, 6, 7, 9, 9, 10, 11, 12, 14, 16][::-1]
 
@@ -21,9 +25,6 @@ def selection(s, f):
     return workable
 
 
-from functools import total_ordering
-
-
 @total_ordering
 class Node:
     def __init__(self, cnt, ch=None):
@@ -37,9 +38,6 @@ class Node:
 
     def __lt__(self, other):
         return self.cnt < other.cnt
-
-
-import heapq
 
 
 def huffman(char_cnt):

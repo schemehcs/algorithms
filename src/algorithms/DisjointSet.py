@@ -1,28 +1,3 @@
-"""class DisjointSet:
-def __init__(self, n):
-    self.ls = [i for i in range(n)]
-
-def union(self, x, y):
-    if x < y:
-        self.ls[y] = x
-    else:
-        self.ls[x] = y
-
-def find(self, x):
-    while x != self.ls[x]:
-        x = self.ls[x]
-    return x
-
-def dump(self):
-    d = dict()
-    for i in range(len(self.ls)):
-        s = self.find(i)
-        if not d.get(s):
-            d[s] = []
-        d[s].append(i)
-    return list(d.values())"""
-
-
 class Node:
     def __init__(self, key):
         self.key = key

@@ -26,7 +26,7 @@ def hash_suite(p):
 def hash_insert(T, hf, k, v):
     key = hf(k) % len(T)
     for _ in range(len(T)):
-        if T[key] == None or T[key][0] == k:
+        if T[key] is None or T[key][0] == k:
             T[key] = (k, v)
             return
         else:
@@ -37,7 +37,7 @@ def hash_insert(T, hf, k, v):
 def hash_search(T, hf, k):
     key = hf(k) % len(T)
     for _ in range(len(T)):
-        if T[key] == None:
+        if T[key] is None:
             return None
         elif T[key][0] == k:
             return T[key]
@@ -57,7 +57,7 @@ def hash_delete_inner(T, hf, q):
         qd = q
         while True:
             qd = (qd + 1) % len(T)
-            if T[qd] == None:
+            if T[qd] is None:
                 return
             if g(T, hf, T[qd][0], q) < g(T, hf, T[qd][0], qd):
                 T[q] = T[qd]
@@ -68,7 +68,7 @@ def hash_delete_inner(T, hf, q):
 def hash_delete(T, hf, k):
     key = hf(k) % len(T)
     for _ in range(len(T)):
-        if T[key] == None:
+        if T[key] is None:
             return None
         elif T[key][0] == k:
             entry = T[key]

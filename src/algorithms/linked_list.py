@@ -1,5 +1,5 @@
-import unittest
 import random
+import unittest
 
 
 class Node:
@@ -17,10 +17,10 @@ class LinkedList:
         self.tail = None
 
     def is_empty(self):
-        return self.head == None
+        return self.head is None
 
     def append(self, v):
-        if self.tail == None:
+        if self.tail is None:
             self.head = self.tail = Node(v)
         else:
             n = Node(v)
@@ -28,11 +28,11 @@ class LinkedList:
             self.tail = n
 
     def pop_left(self):
-        if self.head == None:
+        if self.head is None:
             return None
         n = self.head
         self.head = self.head.next
-        if self.head == None:
+        if self.head is None:
             self.tail = None
         return n.key
 

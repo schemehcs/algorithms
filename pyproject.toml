@@ -7,7 +7,9 @@ authors = [
     { name = "schemehcs", email = "94542969+schemehcs@users.noreply.github.com" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "pqdict>=1.5.1",
+]
 
 [project.scripts]
 algorithms = "algorithms:main"

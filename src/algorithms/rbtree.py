@@ -1,9 +1,15 @@
-BLACK = 0
-RED = 1
+from collections import deque
+from enum import Enum
+from functools import total_ordering
+
+
+class Color(Enum):
+    BLACK = 0
+    RED = 1
 
 
 class Node:
-    def __init__(self, key, color=BLACK):
+    def __init__(self, key, color=Color.BLACK):
         self.size = 1
         self.key = key
         self.color = color
@@ -51,7 +57,7 @@ class RbTree:
         z.p = y
         z.left = NIL
         z.right = NIL
-        z.color = RED
+        z.color = Color.RED
         if self.callback:
             while y is not NIL:
                 self.callback(y)
@@ -59,36 +65,36 @@ class RbTree:
         self.insert_fixup(z)
 
     def insert_fixup(self, z: Node):
-        while z.p.color is RED:
+        while z.p.color is Color.RED:
             if z.p is z.p.p.left:
                 y = z.p.p.right  # uncle node
-                if y.color is RED:
-                    z.p.color = BLACK
-                    y.color = BLACK
-                    z.p.p.color = RED
+                if y.color is Color.RED:
+                    z.p.color = Color.BLACK
+                    y.color = Color.BLACK
+                    z.p.p.color = Color.RED
                     z = z.p.p
                 else:
                     if z is z.p.right:
                         z = z.p
                         self.left_rotate(z)
-                    z.p.color = BLACK
-                    z.p.p.color = RED
+                    z.p.color = Color.BLACK
+                    z.p.p.color = Color.RED
                     self.right_rotate(z.p.p)
             else:
                 y = z.p.p.left
-                if y.color is RED:
-                    z.p.color = BLACK
-                    y.color = BLACK
-                    z.p.p.color = RED
+                if y.color is Color.RED:
+                    z.p.color = Color.BLACK
+                    y.color = Color.BLACK
+                    z.p.p.color = Color.RED
                     z = z.p.p
                 else:
                     if z is z.p.left:
                         z = z.p
                         self.right_rotate(z)
-                    z.p.color = BLACK
-                    z.p.p.color = RED
+                    z.p.color = Color.BLACK
+                    z.p.p.color = Color.RED
                     self.left_rotate(z.p.p)
-        self.root.color = BLACK
+        self.root.color = Color.BLACK
 
     def delete(self, z):
         y = z
@@ -124,55 +130,61 @@ class RbTree:
                 self.callback(p)
             p = p.p
 
-        if y_original_color is BLACK:
+        if y_original_color is Color.BLACK:
             self.delete_fixup(x)
 
     def delete_fixup(self, x):
-        while x is not self.root and x.color is BLACK:
+        while x is not self.root and x.color is Color.BLACK:
             if x is x.p.left:
                 w = x.p.right
-                if w.color is RED:
-                    w.color = BLACK
-                    x.p.color = RED
+                if w.color is Color.RED:
+                    w.color = Color.BLACK
+                    x.p.color = Color.RED
                     self.left_rotate(x.p)
                     w = x.p.right
-                if w.left.color is BLACK and w.right.color is BLACK:
-                    w.color = RED
+                if (
+                    w.left.color is Color.BLACK
+                    and w.right.color is Color.BLACK
+                ):
+                    w.color = Color.RED
                     x = x.p
                 else:
-                    if w.right.color is BLACK:
-                        w.left.color = BLACK
-                        w.color = RED
+                    if w.right.color is Color.BLACK:
+                        w.left.color = Color.BLACK
+                        w.color = Color.RED
                         self.right_rotate(w)
                         w = x.p.right
                     w.color = x.p.color
-                    x.p.color = BLACK
-                    w.right.color = BLACK
+                    x.p.color = Color.BLACK
+                    w.right.color = Color.BLACK
                     self.left_rotate(x.p)
                     x = self.root
             else:
                 w = x.p.left
-                if w.color is RED:
-                    w.color = BLACK
-                    x.p.color = RED
+                if w.color is Color.RED:
+                    w.color = Color.BLACK
+                    x.p.color = Color.RED
                     self.right_rotate(x.p)
                     w = x.p.left
-                if w.right.color is BLACK and w.left.color is BLACK:
-                    w.color = RED
+                if (
+                    w.right.color is Color.BLACK
+                    and w.left.color is Color.BLACK
+                ):
+                    w.color = Color.RED
                     x = x.p
                 else:
-                    if w.left.color is BLACK:
-                        w.right.color = BLACK
-                        w.color = RED
+                    if w.left.color is Color.BLACK:
+                        w.right.color = Color.BLACK
+                        w.color = Color.RED
                         self.left_rotate(w)
                         w = x.p.left
                     w.color = x.p.color
-                    x.p.color = BLACK
-                    w.left.color = BLACK
-                    w.left.color = BLACK
+                    x.p.color = Color.BLACK
+                    w.left.color = Color.BLACK
+                    w.left.color = Color.BLACK
                     self.right_rotate(x.p)
                     x = self.root
-        x.color = BLACK
+        x.color = Color.BLACK
 
     def transplant(self, u, v):
         if u.p is NIL:
@@ -261,15 +273,15 @@ class RbTree:
             if cur_level != e[1]:
                 print("")
                 cur_level = e[1]
-            print("|{}|{}({})".format(e[0].p.key, e[0].key, e[0].size), end=" ")
+            print(
+                "|{}|{}({})".format(e[0].p.key, e[0].key, e[0].size),
+                end=" ",
+            )
             if e[0].left is not NIL:
                 q.append((e[0].left, e[1] + 1))
             if e[0].right is not NIL:
                 q.append((e[0].right, e[1] + 1))
         print()
-
-
-from functools import total_ordering
 
 
 @total_ordering
@@ -303,9 +315,6 @@ def interval_search(tree, i):
     return x
 
 
-from collections import deque
-
-
 def test():
     q = deque()
     T = RbTree()
@@ -329,7 +338,9 @@ def max_node(node):
     if node.left is NIL and node.right is NIL:
         node.key.max = node.key.high
     elif node.left is not NIL and node.right is not NIL:
-        node.key.max = max(node.key.high, node.left.key.max, node.right.key.max)
+        node.key.max = max(
+            node.key.high, node.left.key.max, node.right.key.max
+        )
     elif node.left is not NIL:
         node.key.max = max(node.key.high, node.left.key.max)
     else:

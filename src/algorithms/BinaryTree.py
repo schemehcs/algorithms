@@ -1,5 +1,5 @@
-import unittest
 import random
+import unittest
 
 
 class TreeNode:
@@ -13,14 +13,14 @@ class TreeNode:
         if self.key == v:
             raise ValueError("value collision")
         elif self.key < v:
-            if self.right == None:
+            if self.right is None:
                 n = TreeNode(v)
                 n.p = self
                 self.right = n
             else:
                 self.right.insert(v)
         else:
-            if self.left == None:
+            if self.left is None:
                 n = TreeNode(v)
                 n.p = self
                 self.left = n
@@ -45,10 +45,10 @@ class TreeNode:
                 return
 
     def inorder(self, f):
-        if self.left != None:
+        if self.left is not None:
             self.left.inorder(f)
         f(self)
-        if self.right != None:
+        if self.right is not None:
             self.right.inorder(f)
 
     def inorder_nonrec(self, f):
@@ -57,20 +57,20 @@ class TreeNode:
         while stack:
             n = stack.pop()
             if n.color == 0:
-                if n.right != None:
+                if n.right is not None:
                     stack.append(n.right)
                 n.color = 1
                 stack.append(n)
-                if n.left != None:
+                if n.left is not None:
                     stack.append(n.left)
             else:
                 f(n.key)
 
     def preorder(self, f):
         f(self.key)
-        if self.left != None:
+        if self.left is not None:
             self.left.preorder(f)
-        if self.right != None:
+        if self.right is not None:
             self.right.preorder(f)
 
     def preorder_nonrec(self, f):
@@ -78,16 +78,16 @@ class TreeNode:
         stack.append(self)
         while stack:
             n = stack.pop()
-            if n.r != None:
+            if n.r is not None:
                 stack.append(n.r)
-            if n.l != None:
+            if n.l is not None:
                 stack.append(n.l)
             f(n.v)
 
     def postorder(self, f):
-        if self.left != None:
+        if self.left is not None:
             self.left.postorder(f)
-        if self.right != None:
+        if self.right is not None:
             self.right.postorder(f)
         f(self.key)
 
@@ -121,7 +121,7 @@ class TreeNode:
             n = n.right
 
     def predcessor(self):
-        if self.left != None:
+        if self.left is not None:
             return self.left.max()
         x = self
         y = x.p
@@ -131,7 +131,7 @@ class TreeNode:
         return None
 
     def succesor(self):
-        if self.right != None:
+        if self.right is not None:
             return self.right.min()
         x = self
         y = x.p
@@ -146,7 +146,7 @@ class Tree:
         self.root = None
 
     def insert(self, v):
-        if self.root == None:
+        if self.root is None:
             self.root = TreeNode(v)
         else:
             self.root.insert(v)
